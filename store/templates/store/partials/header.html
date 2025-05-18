@@ -1,0 +1,68 @@
+<header class="site-header">
+  <div class="header-top">
+    <div class="logo">
+      🛍️ <span>Store Moirang</span>
+    </div>
+
+    <div class="search-bar">
+      <form action="{% url 'search' %}" method="get">
+        <input type="text" name="q" placeholder="Search products...">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    {% if not user.is_authenticated %}
+    <div class="auth-links">
+      <a href="{% url 'login' %}">Login</a>
+      <span class="divider">|</span>
+      <a href="{% url 'register' %}">Register</a>
+    </div>
+    {% endif %}
+
+    <!-- Cart icon stays always visible -->
+    {% if user.is_authenticated %}
+    <div class="cart-icon">
+      <a href="{% url 'cart' %}">
+        🛒
+        <span class="cart-count">{{ cart_count }}</span>
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Hamburger menu icon -->
+    <div class="hamburger" onclick="toggleMobileMenu()">☰</div>
+  </div>
+
+  <!-- Hidden on mobile initially -->
+  <nav class="nav-bar" id="mainNav">
+    <div class="dropdown">
+      <button class="dropbtn" onclick="toggleDropdown('categoryMenu')">Categories</button>
+      <div class="dropdown-content" id="categoryMenu">
+        {% for category in categories %}
+          <a href="{% url 'category_items' category.id %}">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'about' %}">About Us</a>
+    <a href="{% url 'contact' %}">Contact Us</a>
+
+    {% if user.is_authenticated %}
+    <div class="dropdown profile-dropdown">
+      <button class="dropbtn" onclick="toggleDropdown('profileMenu')">My Profile</button>
+      <div class="dropdown-content" id="profileMenu">
+        <a href="{% url 'account_settings' %}">Account Settings</a>
+        <a href="#">Orders</a>
+        <a href="{% url 'support' %}">Customer Support</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a href="{% url 'login' %}">My Profile</a>
+    {% endif %}
+  </nav>
+
+  {% load static %}
+  <script src="{% static 'js/mains.js' %}"></script>
+</header>

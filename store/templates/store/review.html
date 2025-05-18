@@ -1,0 +1,37 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/review.css' %}">
+
+<div class="review-container">
+  <h2>Customer Reviews</h2>
+
+  {% if user.is_authenticated %}
+    <div class="review-form">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Review</button>
+      </form>
+    </div>
+  {% else %}
+    <p><a href="{% url 'login' %}">Login</a> to submit a review.</p>
+  {% endif %}
+
+  <hr>
+
+  <div class="review-list">
+    {% for review in reviews %}
+      <div class="review-item">
+        <strong>{{ review.user.username }}</strong> —
+        <span class="stars">{{ review.rating }}★</span>
+        <p>{{ review.feedback }}</p>
+        <small>{{ review.created_at|date:"F j, Y, g:i a" }}</small>
+      </div>
+    {% empty %}
+      <p>No reviews yet. Be the first to leave one!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

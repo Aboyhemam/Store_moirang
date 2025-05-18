@@ -1,0 +1,25 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Home | Store Moirang{% endblock %}
+
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<div class="product-container">
+  {% for product in products %}
+    <a href="{% url 'product_detail' product.id %}" class="product-link">
+      <div class="product-card">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+        <h3>{{ product.name }}</h3>
+        <p>₹{{ product.price }}</p>
+      </div>
+    </a>
+  {% empty %}
+    <p>No products available.</p>
+  {% endfor %}
+</div>
+
+
+{% endblock %}

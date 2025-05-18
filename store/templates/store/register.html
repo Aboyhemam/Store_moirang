@@ -1,0 +1,44 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+<div class="auth-container">
+  <h2>Register</h2>
+
+  {% if form.errors %}
+    <div class="alert error">
+      Please correct the highlighted errors below.
+    </div>
+  {% endif %}
+
+  <form method="post">
+  {% csrf_token %}
+  <p>Username</p>
+  <p>{{ form.username }}</p>
+  <p>First name</p>
+  <p>{{ form.first_name }}</p>
+  <p>Last name</p>
+  <p>{{ form.last_name }}</p>
+  <p>Email</p>
+  <p>{{ form.email }}</p>
+  <p>Phone</p>
+  <p>{{ form.phone_number }}</p>
+  <p>Address</p>
+  <p>{{ form.address }}</p>
+
+  
+  <p>Password</p>
+  <p>{{ form.password1 }}</p>
+  {% if form.password1.errors %}<div class="field-error">{{ form.password1.errors }}</div>{% endif %}
+
+  <p>Confirm Password</p>
+  <p>{{ form.password2 }}</p>
+  {% if form.password2.errors %}<div class="field-error">{{ form.password2.errors }}</div>{% endif %}
+
+  <button type="submit">Register</button>
+</form>
+<p> Already had an account? <a href="{% url 'login' %}"> Login here. </a></p>
+
+</div>
+{% endblock %}

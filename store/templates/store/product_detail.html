@@ -1,0 +1,57 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+
+<div class="product-detail-container">
+  <div class="product-image">
+    {% if product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+      <p>No image available</p>
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <h2>{{ product.name }}</h2>
+    <p class="price">Price: ₹{{ product.price }}</p>
+    <p class="description">{{ product.description }}</p>
+
+    {% if product.quantity > 0 %}
+      <form method="post" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <div class="quantity-selector">
+          <button type="button" onclick="changeQuantity(-1)">−</button>
+          <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.quantity }}">
+          <button type="button" onclick="changeQuantity(1)">+</button>
+        </div>
+        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+      </form>
+    {% else %}
+      <p class="out-of-stock-msg">🚫 Item out of stock</p>
+      <div class="quantity-selector">
+        <button type="button" disabled>−</button>
+        <input type="number" value="0" disabled>
+        <button type="button" disabled>+</button>
+      </div>
+      <button class="add-to-cart-btn" disabled>Add to Cart</button>
+    {% endif %}
+
+    <script>
+      function changeQuantity(change) {
+        const input = document.getElementById('quantity');
+        const current = parseInt(input.value);
+        const max = parseInt(input.getAttribute('max')) || 9999;
+        if (!isNaN(current)) {
+          const updated = current + change;
+          if (updated >= 1 && updated <= max) {
+            input.value = updated;
+          }
+        }
+      }
+    </script>
+
+  </div>
+</div>
+{% endblock %}

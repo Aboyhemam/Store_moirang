@@ -1,0 +1,14 @@
+{% extends 'store/base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/change.css' %}">
+<div class="form-container">
+  <h2>Change Address</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+  </form>
+  <a href="{% url 'account_settings' %}">← Back to Account Settings</a>
+</div>
+{% endblock %}

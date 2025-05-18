@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+
+<div class="account-settings-container">
+  <!-- Main Content Section -->
+  <div class="settings-content">
+    <h2>My Account</h2>
+    <div class="user-info">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+      <p><strong>Address:</strong> {{ user.address }}</p>
+    </div>
+
+    <div class="settings-sidebar">
+      <h3>Update Information</h3>
+      <ul>
+        <li><a href="{% url 'change_username' %}">Change Username</a></li>
+        <hr>
+        <li><a href="{% url 'change_name' %}">Change First/Last Name</a></li>
+        <hr>
+        <li><a href="{% url 'change_email' %}">Change Email</a></li>
+        <hr>
+        <li><a href="{% url 'change_phone' %}">Change Phone Number</a></li>
+        <hr>
+        <li><a href="{% url 'change_address' %}">Change Address</a></li>
+        <hr>
+        <li><a href="{% url 'change_password' %}">Change Password</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

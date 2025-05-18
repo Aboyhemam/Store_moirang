@@ -1,0 +1,117 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/carts.css' %}">
+
+<div class="cart-container">
+  <h2>Your Cart</h2>
+
+  {% if cart and cart.items.all %}
+    <div class="cart-items">
+      {% for item in cart.items.all %}
+        <div class="cart-item">
+          <div class="item-image">
+            {% if item.product.image %}
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+            {% else %}
+              <p>No image</p>
+            {% endif %}
+          </div>
+
+          <div class="item-details">
+            <h3>{{ item.product.name }}</h3>
+            <p>Price: ₹{{ item.product.price }}</p>
+
+            <!-- ✅ Individual quantity update form -->
+            <div class="quantity-controls">
+              <form method="post" action="{% url 'update_cart_quantity' item.id %}">
+                {% csrf_token %}
+                <button type="submit" name="action" value="decrease">−</button>
+                <input type="text" value="{{ item.quantity }}" readonly>
+                <button type="submit" name="action" value="increase">+</button>
+              </form>
+            </div>
+
+            <p>Total: ₹{{ item.product.price|multiply:item.quantity }}</p>
+          </div>
+
+          <div class="select-checkbox">
+  <!-- Remove button form -->
+  <form method="post" action="{% url 'remove_from_cart' item.id %}" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="remove-button">🗑</button>
+  </form>
+
+  <!-- Checkbox -->
+  <input type="checkbox"
+         class="item-checkbox"
+         name="selected_items"
+         value="{{ item.id }}"
+         data-price="{{ item.product.price|multiply:item.quantity }}">
+</div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- ✅ Now the checkout form wraps only the summary and button -->
+    <form method="post" action="{% url 'checkout_selected' %}">
+      {% csrf_token %}
+      <div class="cart-summary">
+        <strong>Total Items:</strong> {{ cart.items.count }}<br>
+        <strong>Total Price:</strong> ₹{{ total }}<br><br>
+
+        <div class="selected-summary">
+          <strong>Selected Items:</strong> <span id="selected-count">0</span><br>
+          <strong>Selected Total:</strong> ₹<span id="selected-total">0</span>
+        </div>
+
+        <!-- ✅ Hidden inputs for selected items will be dynamically created -->
+        <div id="selected-hidden-inputs"></div>
+
+        <button type="submit" class="checkout-button">Checkout Selected</button>
+      </div>
+    </form>
+
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    const countDisplay = document.getElementById('selected-count');
+    const totalDisplay = document.getElementById('selected-total');
+    const hiddenInputsContainer = document.getElementById('selected-hidden-inputs');
+
+    function updateSummary() {
+      let selectedCount = 0;
+      let selectedTotal = 0;
+      hiddenInputsContainer.innerHTML = ''; // Clear previous inputs
+
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          selectedCount++;
+          selectedTotal += parseFloat(cb.dataset.price);
+
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'selected_items';
+          input.value = cb.value;
+          hiddenInputsContainer.appendChild(input);
+        }
+      });
+
+      countDisplay.textContent = selectedCount;
+      totalDisplay.textContent = selectedTotal.toFixed(2);
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', updateSummary);
+    });
+  });
+</script>
+{% endblock %}

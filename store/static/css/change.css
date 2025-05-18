@@ -1,0 +1,77 @@
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.form-container h2 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-align: center;
+  color: #333;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-container form p {
+  margin-bottom: 15px;
+}
+
+.form-container label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container textarea {
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.form-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-container button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #0e6f8f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #095872;
+}
+
+.form-container a {
+  display: inline-block;
+  margin-top: 20px;
+  color: #0e6f8f;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.form-container a:hover {
+  text-decoration: underline;
+}

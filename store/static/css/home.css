@@ -1,0 +1,95 @@
+/* === Grid Container === */
+.product-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  background-color: #f9f9f9;
+}
+
+/* === Clickable Product Link === */
+.product-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* === Product Card === */
+.product-card {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  text-align: center;
+  padding: 15px;
+  height: 100%; /* Fill grid cell */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* === Hover Effect === */
+.product-card:hover {
+  background-color: #000;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* === Product Image === */
+.product-image {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+/* === Product Name === */
+.product-card h3 {
+  font-size: 1.1rem;
+  margin-top: 5px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-card:hover h3 {
+  color: #fff;
+}
+
+/* === Product Price === */
+.product-card p {
+  font-weight: bold;
+  color: #f75c03;
+  font-size: 1rem;
+}
+
+.product-card:hover p {
+  color: #ffa856;
+}
+
+/* === Responsive Padding for Smaller Screens === */
+@media (max-width: 600px) {
+  .product-container {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .product-card {
+    padding: 12px;
+  }
+
+  .product-image {
+    height: 130px;
+  }
+}

@@ -1,0 +1,27 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/support.css' %}">
+
+<div class="support-container">
+  <h2>Customer Support</h2>
+
+  <div class="support-contacts">
+    <p><strong>Phone:</strong> {{ support_phone }}</p>
+    <p><strong>Email:</strong> <a href="mailto:{{ support_email }}">{{ support_email }}</a></p>
+  </div>
+
+  <div class="faq-section">
+    <h3>Frequently Asked Questions</h3>
+    {% for faq in faqs %}
+      <div class="faq-item">
+        <h4>{{ faq.question }}</h4>
+        <p>{{ faq.answer }}</p>
+      </div>
+    {% empty %}
+      <p>No FAQs available at the moment.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

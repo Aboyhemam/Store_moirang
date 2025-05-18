@@ -1,0 +1,34 @@
+.review-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.review-form {
+  margin-bottom: 30px;
+}
+.review-form form {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+.review-form button {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.review-form button:hover {
+  background-color: #45a049;
+}
+.review-item {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+.stars {
+  color: #ff9800;
+}

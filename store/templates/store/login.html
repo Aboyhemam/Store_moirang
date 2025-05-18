@@ -1,0 +1,16 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+<div class="auth-container">
+  <h2>Login</h2>  {# or Login #}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button> {# or Login #}
+    <p><a href="{% url 'forgot_password' %}">Forgot Password?</a></p>
+    <p>Don't have an account ? <a href="{% url 'register'%}"> Register Here. </a></p>
+  </form>
+</div>
+{% endblock %}

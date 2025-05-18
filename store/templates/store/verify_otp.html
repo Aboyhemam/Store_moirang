@@ -1,0 +1,32 @@
+{% extends 'store/base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/change.css' %}">
+<div class="form-container">
+  <h2>Verify OTP</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Verify</button>
+  </form>
+  <button id="resendBtn" onclick="window.location.href='{% url 'send_otp' %}'" disabled>Resend OTP</button>
+<p id="timer"></p>
+
+<script>
+  let timeLeft = 30;
+  const button = document.getElementById("resendBtn");
+  const timer = document.getElementById("timer");
+
+  const countdown = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      button.disabled = false;
+      timer.textContent = "You can resend the OTP now.";
+    } else {
+      timer.textContent = `You can resend OTP in ${timeLeft} second(s)`;
+      timeLeft -= 1;
+    }
+  }, 1000);
+</script>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+.account-settings-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.settings-content {
+  padding: 10px;
+}
+
+.user-info {
+  margin-bottom: 30px;
+}
+
+.user-info p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.settings-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.settings-sidebar li {
+  margin: 10px 0;
+}
+
+.settings-sidebar a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.settings-sidebar hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
