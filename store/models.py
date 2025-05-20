@@ -109,3 +109,27 @@ class PasswordResetOTP(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=10)  # OTP expires in 10 minutes
+
+class Order(models.Model):
+    # Customer and shipping details
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    address = models.TextField()
+
+    # Product and cart details
+    product_details = models.TextField(help_text="List of product names and quantities")
+
+    # Razorpay fields
+    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
+
+    # Additional fields
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order #{self.id} by {self.user.username}"

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Product, Category, Cart, CartItem, FAQ, Review, PasswordResetOTP
+from .models import Product, Category, Cart, CartItem, FAQ, Review, PasswordResetOTP, Order
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
@@ -12,62 +12,76 @@ from .forms import EmailForm, OTPVerificationForm
 from django.core.mail import send_mail
 from datetime import timedelta
 from django.utils import timezone
+from django.conf import settings
 import random
-
-
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from razorpay import Client, Utility
+import json
 
 User = get_user_model()
 
 def home(request):
     products = Product.objects.all()
     categories = Category.objects.all()
-    return render(request, 'store\home.html', {'products': products, 'categories': categories})
+    return render(request, 'store/home.html', {'products': products, 'categories': categories})
 
 def about(request):
-    return render(request, 'store/about.html')
+    categories = Category.objects.all()
+    return render(request, 'store/about.html', {'categories': categories})
 
 def terms(request):
-    return render(request, 'store/terms.html')
+    categories = Category.objects.all()
+    return render(request, 'store/terms.html', {'categories': categories})
 
 def cancel(request):
-    return render(request, 'store/cancelation_refund.html')
+    categories = Category.objects.all()
+    return render(request, 'store/cancelation_refund.html', {'categories': categories})
 
 def shipping(request):
-    return render(request, 'store/shipping.html')
+    categories = Category.objects.all()
+    return render(request, 'store/shipping.html', {'categories': categories})
 
 
 def support(request):
+    categories = Category.objects.all()
     faqs = FAQ.objects.all().order_by('created_at')
     context = {
         'faqs': faqs,
         'support_phone': '9362843841',
-        'support_email': 'storemoirang@gmail.com'
+        'support_email': 'storemoirang@gmail.com',
+        'categories' : categories
     }
     return render(request, 'store/support.html', context)
 
 def privacy(request):
-    return render(request, 'store/privacy.html')
+    categories = Category.objects.all()
+    return render(request, 'store/privacy.html', {'categories': categories})
 
 def contact(request):
-    return render(request, 'store/contact.html')
+    categories = Category.objects.all()
+    return render(request, 'store/contact.html', {'categories': categories})
 
 @login_required
 def account_settings(request):
-    return render(request, 'store/account_settings.html')
+    categories = Category.objects.all()
+    return render(request, 'store/account_settings.html', {'categories': categories})
 
 def category_items(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     products = Product.objects.filter(category=category)
     categories = Category.objects.all()
-    return render(request, 'store\home.html', {'products': products, 'categories': categories})
+    return render(request, 'store/home.html', {'products': products, 'categories': categories})
 
 def search(request):
     query = request.GET.get('q')
     products = Product.objects.filter(Q(name__icontains=query) | Q(category__name__icontains=query))
     categories = Category.objects.all()
-    return render(request, 'store\home.html', {'products': products, 'categories': categories})
+    return render(request, 'store/home.html', {'products': products, 'categories': categories})
 
 def register_view(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -76,9 +90,10 @@ def register_view(request):
             return redirect('home')
     else:
         form = CustomUserCreationForm()
-    return render(request, 'store/register.html', {'form': form})
+    return render(request, 'store/register.html', {'form': form, 'categories':categories})
 
 def login_view(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = CustomLoginForm(data=request.POST)
         if form.is_valid():
@@ -87,7 +102,7 @@ def login_view(request):
             return redirect('home')
     else:
         form = CustomLoginForm()
-    return render(request, 'store/login.html', {'form': form})
+    return render(request, 'store/login.html', {'form': form, 'categories':categories})
 
 def logout_view(request):
     logout(request)
@@ -95,11 +110,13 @@ def logout_view(request):
 
 
 def product_detail(request, product_id):
+    categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'store/product_detail.html', {'product': product})
+    return render(request, 'store/product_detail.html', {'product': product, 'categories':categories})
 
 @login_required
 def add_to_cart(request, product_id):
+    categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
     quantity = int(request.POST.get('quantity', 1))
 
@@ -117,6 +134,7 @@ def add_to_cart(request, product_id):
     return redirect('product_detail', product_id=product.id)
 
 def some_view(request):
+    categories = Category.objects.all()
     cart_count = 0
     if request.user.is_authenticated:
         cart = Cart.objects.filter(user=request.user).first()
@@ -125,14 +143,16 @@ def some_view(request):
 
     return render(request, 'store/your_template.html', {
         'cart_count': cart_count,
+        'categories':categories
         # other context variables
     })
 
 @login_required
 def cart(request):
+    categories = Category.objects.all()
     cart = Cart.objects.prefetch_related('items__product').filter(user=request.user).first()
     total = sum(item.product.price * item.quantity for item in cart.items.all()) if cart else 0
-    return render(request, 'store/cart.html', {'cart': cart, 'total': total})
+    return render(request, 'store/cart.html', {'cart': cart, 'total': total, 'categories':categories})
 
 @login_required
 def update_cart_quantity(request, item_id):
@@ -171,6 +191,7 @@ def checkout_selected(request):
 
 
 def customer_reviews(request):
+    categories = Category.objects.all()
     reviews = Review.objects.order_by('-created_at')  # Newest first
 
     if request.method == 'POST':
@@ -188,11 +209,13 @@ def customer_reviews(request):
 
     return render(request, 'store/review.html', {
         'reviews': reviews,
-        'form': form
+        'form': form,
+        'categories':categories,
     })
     
 @login_required
 def change_username(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = ChangeUsernameForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -201,10 +224,11 @@ def change_username(request):
             return redirect('account_settings')
     else:
         form = ChangeUsernameForm(instance=request.user)
-    return render(request, 'store/ch_username.html', {'form': form, 'title': 'Change Username'})
+    return render(request, 'store/ch_username.html', {'form': form, 'title': 'Change Username', 'categories':categories})
 
 @login_required
 def change_name(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = ChangeNameForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -213,10 +237,11 @@ def change_name(request):
             return redirect('account_settings')
     else:
         form = ChangeNameForm(instance=request.user)
-    return render(request, 'store/ch_name.html', {'form': form, 'title': 'Change Name'})
+    return render(request, 'store/ch_name.html', {'form': form, 'title': 'Change Name', 'categories':categories})
 
 @login_required
 def change_email(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = ChangeEmailForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -225,10 +250,11 @@ def change_email(request):
             return redirect('account_settings')
     else:
         form = ChangeEmailForm(instance=request.user)
-    return render(request, 'store/ch_email.html', {'form': form, 'title': 'Change Email'})
+    return render(request, 'store/ch_email.html', {'form': form, 'title': 'Change Email', 'categories':categories})
 
 @login_required
 def change_phone(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = ChangePhoneForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -237,10 +263,11 @@ def change_phone(request):
             return redirect('account_settings')
     else:
         form = ChangePhoneForm(instance=request.user)
-    return render(request, 'store/ch_phone.html', {'form': form, 'title': 'Change Phone Number'})
+    return render(request, 'store/ch_phone.html', {'form': form, 'title': 'Change Phone Number', 'categories':categories})
 
 @login_required
 def change_address(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = ChangeAddressForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -249,10 +276,11 @@ def change_address(request):
             return redirect('account_settings')
     else:
         form = ChangeAddressForm(instance=request.user)
-    return render(request, 'store/ch_address.html', {'form': form, 'title': 'Change Address'})
+    return render(request, 'store/ch_address.html', {'form': form, 'title': 'Change Address', 'categories':categories})
 
 @login_required
 def change_password(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
@@ -261,7 +289,7 @@ def change_password(request):
             return redirect('account_settings')
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'store/ch_password.html', {'form': form})
+    return render(request, 'store/ch_password.html', {'form': form, 'categories':categories})
 
 def send_otp_email(email, otp):
     send_mail(
@@ -310,6 +338,7 @@ def send_otp_view(request):
 
 
 def forgot_password(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = EmailForm(request.POST)
         if form.is_valid():
@@ -328,10 +357,11 @@ def forgot_password(request):
     else:
         form = EmailForm()
 
-    return render(request, 'store/forgot_password.html', {'form': form})
+    return render(request, 'store/forgot_password.html', {'form': form, 'categories':categories})
 
 
 def verify_otp(request):
+    categories = Category.objects.all()
     user_id = request.session.get('reset_user_id')
     if not user_id:
         return redirect('forgot_password')
@@ -355,4 +385,98 @@ def verify_otp(request):
                 messages.error(request, 'Invalid OTP.')
     else:
         form = OTPVerificationForm()
-    return render(request, 'store/verify_otp.html', {'form': form})
+    return render(request, 'store/verify_otp.html', {'form': form, 'categories':categories})
+
+@login_required
+def checkout(request):
+    user = request.user
+
+    selected_ids = request.session.get('selected_item_ids', [])
+    cart_items = CartItem.objects.filter(id__in=selected_ids, cart__user=user)
+
+    if not cart_items:
+        messages.error(request, "No items found for checkout.")
+        return redirect('cart')
+
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    product_details = ', '.join([f"{item.product.name} x{item.quantity}" for item in cart_items])
+
+    # 🟢 Always create Razorpay order and local order when page loads (GET)
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    razorpay_order = client.order.create({
+        "amount": int(total_price * 100),
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    order = Order.objects.create(
+        user=user,
+        name=user.first_name,
+        phone=user.phone_number,
+        email=user.email,
+        address=user.address,
+        product_details=product_details,
+        amount=total_price,
+        razorpay_order_id=razorpay_order['id'],
+        paid=False
+    )
+
+    context = {
+        'user': user,
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'razorpay_key': settings.RAZORPAY_KEY_ID,
+        'razorpay_order': razorpay_order,  # full dict, not just ID
+        'order_id': order.id,
+        'payment_ready': True,
+        'order': order,
+    }
+    return render(request, 'store/checkout.html', context)
+
+    
+    
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        order_id = data.get("order_id")
+
+        try:
+            order = Order.objects.get(id=order_id)
+            order.razorpay_payment_id = data.get("razorpay_payment_id")
+            order.razorpay_signature = data.get("razorpay_signature")
+            order.paid = True
+            order.save()
+
+            # ✅ Save order ID to session for the success page
+            request.session['paid_order_id'] = order.id
+
+            # ✅ Delete only the cart items that were paid (stored in session)
+            selected_cart_ids = request.session.get('selected_cart_items', [])
+            if selected_cart_ids:
+                Cart.objects.filter(id__in=selected_cart_ids, user=order.user).delete()
+                # Clear it after deletion
+                del request.session['selected_cart_items']
+
+            return JsonResponse({"status": "success"})
+
+        except Order.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Order not found."}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Invalid request."}, status=400)
+
+@login_required
+def payment_success_page(request):
+    order_id = request.session.get('paid_order_id')
+    if not order_id:
+        return redirect('home')  # fallback if session missing
+    try:
+        order = Order.objects.get(id=order_id)
+        return render(request, "store/payment_success.html", {"order": order})
+    except Order.DoesNotExist:
+        return redirect('home')
+
+@login_required
+def user_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'store/orders.html', {'orders': orders})

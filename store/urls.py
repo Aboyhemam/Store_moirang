@@ -30,6 +30,11 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('resend-otp/', views.send_otp_view, name='send_otp'),
     path('checkout-selected/', views.checkout_selected, name='checkout_selected'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('payment/success/', views.payment_success_page, name='payment_success_page'),
+    path('payment/verify/', views.payment_success, name='payment_success'),
+    path('orders/', views.user_orders, name='orders'),
+
 
 
 

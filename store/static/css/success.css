@@ -1,0 +1,28 @@
+.success-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.details-box {
+  margin-top: 20px;
+  padding: 20px;
+  border: 2px solid #4CAF50;
+  background-color: #f9fff9;
+  border-radius: 8px;
+  display: inline-block;
+  text-align: left;
+}
+
+.home-btn {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.home-btn:hover {
+  background-color: #45a049;
+}

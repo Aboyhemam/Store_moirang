@@ -1,0 +1,85 @@
+/* checkout.css */
+
+.checkout-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.checkout-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.user-info, .selected-items, .total-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.user-info h3,
+.selected-items h3,
+.total-section h3 {
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.user-info p,
+.checkout-item p {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.checkout-item {
+  border-bottom: 1px dashed #ccc;
+  padding: 10px 0;
+}
+
+.total-section {
+  text-align: center;
+  background-color: #fdfdfd;
+}
+
+.pay-btn {
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+ /* Since it's not active yet */
+  opacity: 0.7;
+}
+
+.pay-btn:hover {
+  background-color: #218838;
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 15px;
+    margin: 20px 10px;
+  }
+
+  .user-info, .selected-items, .total-section {
+    padding: 12px;
+  }
+
+  .checkout-item p, .user-info p {
+    font-size: 14px;
+  }
+
+  .pay-btn {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 17px;
+  }
+}

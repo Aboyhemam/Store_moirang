@@ -57,23 +57,24 @@
     </div>
 
     <!-- ✅ Now the checkout form wraps only the summary and button -->
-    <form method="post" action="{% url 'checkout_selected' %}">
-      {% csrf_token %}
-      <div class="cart-summary">
-        <strong>Total Items:</strong> {{ cart.items.count }}<br>
-        <strong>Total Price:</strong> ₹{{ total }}<br><br>
+<form method="post" action="{% url 'checkout_selected' %}">
+  {% csrf_token %}
+  <div class="cart-summary">
+    <strong>Total Items:</strong> {{ cart.items.count }}<br>
+    <strong>Total Price:</strong> ₹{{ total }}<br><br>
 
-        <div class="selected-summary">
-          <strong>Selected Items:</strong> <span id="selected-count">0</span><br>
-          <strong>Selected Total:</strong> ₹<span id="selected-total">0</span>
-        </div>
+    <div class="selected-summary">
+      <strong>Selected Items:</strong> <span id="selected-count">0</span><br>
+      <strong>Selected Total:</strong> ₹<span id="selected-total">0</span>
+    </div>
 
-        <!-- ✅ Hidden inputs for selected items will be dynamically created -->
-        <div id="selected-hidden-inputs"></div>
+    <!-- Hidden inputs for selected items will be dynamically created -->
+    <div id="selected-hidden-inputs"></div>
 
-        <button type="submit" class="checkout-button">Checkout Selected</button>
-      </div>
-    </form>
+    <button type="submit" class="checkout-button">Checkout Selected</button>
+  </div>
+</form>
+
 
   {% else %}
     <p>Your cart is empty.</p>

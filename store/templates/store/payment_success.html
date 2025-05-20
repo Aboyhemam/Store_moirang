@@ -1,0 +1,21 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/success.css' %}">
+
+<div class="success-container">
+  <h2>🎉 Payment Successful!</h2>
+  <p>Thank you for your purchase, {{ user.first_name }}!</p>
+
+  <div class="details-box">
+    <h3>Order Details</h3>
+    <p><strong>Order ID:</strong> {{ order.id }}</p>
+    <p><strong>Razorpay Payment ID:</strong> {{ order.razorpay_payment_id }}</p>
+    <p><strong>Amount Paid:</strong> ₹{{ order.amount }}</p>
+    <p><strong>Status:</strong> Paid</p>
+  </div>
+
+  <a href="{% url 'home' %}" class="home-btn">Return to Homepage</a>
+</div>
+{% endblock %}
